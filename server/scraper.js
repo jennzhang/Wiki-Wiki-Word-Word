@@ -25,7 +25,7 @@ function getWikiSearchResults(searchTerm)
 	// join() citation: https://www.w3schools.com/jsref/jsref_join.asp
 	let term = searchTerm.split(" ").join("%20"); 
 	
-	// Note for page retrieval limit: allow up to 15 pagesto cover any disambiguation pages. Remove disambiguation pages in formatPages() via removeDisambiguationPages();
+	// Note for page retrieval limit: allow up to 15 pagesto cover any disambiguation pages. Remove disambiguation pages in formatPages() via removePagesWithoutExtracts();
 	var params = 
 	{
 		action: "query",
@@ -55,11 +55,11 @@ function getWikiSearchResults(searchTerm)
 			if (wikiResponseJSON.query) 	// there are search results
 			{
 				response.pages = formatPages(wikiResponseJSON.query.pages);
-				response.numResponses = Object.keys(response.pages).length;	
+				response.numResults = Object.keys(response.pages).length;	
 			}
 			else	// there are no search results
 			{
-				response.numResponses = 0;
+				response.numResults = 0;
 				response.pages = {};
 			}
 			return response;
@@ -69,21 +69,25 @@ function getWikiSearchResults(searchTerm)
 	return wikipediaResponse;
 };
 
-// removeDisambiguationPages() :
+// removePagesWithoutExtracts() :
 // is a helper function that removes any Wikipedia
-// search results that are disambiguation pages, as
+// search results that are disambiguation pages, or
+// other pages that do not have extracts, and are 
+// pages only that list or link to other pages as
 // these pages do not have any direct information 
 // nor do they have meaningful extracts. The pages
 // indicated in disambiguation pages should already 
 // be included in the reset of the Wikipedia search
 // results set
-function removeDisambiguationPages(pagesObj)
+function removePagesWithoutExtracts(pagesObj)
 {
 	Object.keys(pagesObj).forEach( page => 
 	{
-		if (pagesObj[page].pageprops) 
+		if (pagesObj[page].pageprops ||
+			pagesObj[page].extract.length == 0) 
 			{
-				// delete the disambiguation page from the response. 
+				// delete disambiguation pages and pages with
+				// empty extracts from the response.
 				delete pagesObj[page];
 			}
 	});
@@ -93,7 +97,7 @@ function removeDisambiguationPages(pagesObj)
 
 // reorderIndexes():
 // is a helper function which is called after 
-// removeDisambiguationPages(); it reorders
+// removePagesWithoutExtracts(); it reorders
 // the indexes of the Wikipedia search results 
 // so that they are contiguous and limits the
 // max search results to 10, if there are more
@@ -113,7 +117,7 @@ function reorderIndexes(pagesObj)
 	// citation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
 	newIdxPages.sort((a, b) => a.index - b.index);
 	
-	// only keep the first ten pages. Note: removeDisambiguationPages() should have been called first
+	// only keep the first ten pages. Note: removePagesWithoutExtracts() should have been called first
 	newIdxPages = newIdxPages.slice(0,10)
 	
 	// empty pagesObj and then rebuild
@@ -163,7 +167,7 @@ function formatPages(pagesObj)
 	// format the Wiki Wiki Word Word Response JSON
 	let pages = trimAttributes(
 					reorderIndexes(
-							removeDisambiguationPages(pagesObj)));
+							removePagesWithoutExtracts(pagesObj)));
 	
 	return pages;
 }
