@@ -7,89 +7,79 @@ document.addEventListener('DOMContentLoaded', bindRelatedPages);
 // Pages Section
 function bindRelatedPages() 
 {
-	document.getElementById("search_form").onsubmit = e => {
-		e.preventDefault();
-		
-		// build api call
-		let search_term = document.getElementById("search_term").value; 
-		// format the search term. change any spaces to "%20"
-    // split() citation: https://www.w3schools.com/jsref/jsref_split.asp
-    // join() citation: https://www.w3schools.com/jsref/jsref_join.asp
-    search_term = search_term.split(" ").join("%20");
-		
-		
-		let container = document.getElementById("results_JSON");
-		getSearchResults(search_term).then( resultsJSON => 
-		{
-			// Get the results modal
-			var modal = document.getElementById("resultsModal");
-
-			var resultsList = document.getElementById("resultsList");
-			// clear out any old data
-			while ( resultsList.firstChild ) { resultsList.removeChild(resultsList.firstChild) };
+	// build api call
+	let search_term = "tom hanks"// update with integration to TFA microservice 
+	// format the search term. change any spaces to "%20"
+	// split() citation: https://www.w3schools.com/jsref/jsref_split.asp
+	// join() citation: https://www.w3schools.com/jsref/jsref_join.asp
+	search_term = search_term.split(" ").join("%20");
+	
+	// get the related pages
+	getSearchResults(search_term).then( resultsJSON => 
+	{ 		
+		// for each result, print the title page as a subheading, 
+		// linking to the Wikipedia page, then print the extract
+		for ( const page in resultsJSON.pages )
+		{				
+				let pageNode = document.createElement('div');
+				
+				// create linked page title
+				let pageHeader = document.createElement('h2');
+				pageHeader.classList.add('fw-light');
+				let pageTitle = document.createElement('a');
+				pageTitle.setAttribute('target', '_blank');
+				let title = document.createTextNode(resultsJSON.pages[page].title);
+				pageTitle.append(title);
+				pageTitle.href = resultsJSON.pages[page].url;
+				pageHeader.append(pageTitle);
+				
 			
-			// add new data
-			// if there are no results, display message 
-			let results_string = "";
-			if (resultsJSON.numResults == 0) 
-			{ 
-				results_string = "There are no results.";
-				resultsList.textContent = results_string;
-			}
-			else
-			{	
-				// for each result, print the title page as a subheading, 
-				// linking to the Wikipedia page, then print the extract
-				for ( const page in resultsJSON.pages )
-				{				
-					let pageNode = document.createElement('p');
-				
-					// create linked page title
-					let pageTitle = document.createElement('a');
-					let title = document.createTextNode(resultsJSON.pages[page].title);
-					pageTitle.append(title);
-					pageTitle.href = resultsJSON.pages[page].url;
-				
-					// create page summary
-					let pageSummary = document.createElement('p');
-					let summary = document.createTextNode(resultsJSON.pages[page].extract);
-					pageSummary.append(summary);
-				
+				// create page summary
+				let pageSummary = document.createElement('p');
+				pageSummary.classList.add('lead', 'text-muted');
+				let summary = document.createTextNode(resultsJSON.pages[page].extract);
+				pageSummary.append(summary);
+			
 				// add to the new pageNode
-					pageNode.appendChild(pageTitle);
-					pageNode.appendChild(pageSummary);
-				
-				//add to the modal
-				document.getElementById("resultsList").appendChild(pageNode);
-				}
-			}
-		
-			// Show the modal
-			modal.style.display = "block";
-
-			// Get the <span> element that closes the modal
-			var span = document.getElementById("closeResultsModalButton");
-
-			// When the user clicks on <span> (x), empty the form inputs, then close the modal
-			span.onclick = function() 
+				pageNode.appendChild(pageHeader);
+				pageNode.appendChild(pageSummary);
+			
+			//add to the home page, based on index
+			// condition for below switch logic: https://stackoverflow.com/questions/5464362/javascript-using-a-condition-in-switch-case
+			switch ( true )	// resolves against booleans in case conditions
 			{
-					document.getElementById("search_term").value = "";
-					modal.style.display = "none";
+				case page=="1" || page=="2":
+					// console.log("1 TO 2: simulating add of page #" + page);
+					// specifiy wiki_page class
+					pageNode.classList.add('wiki_page');
+					// add to correct row
+					document.getElementById("pages1to2").appendChild(pageNode);
+					break;
+				case page=="3" || page=="4" || page=="5":
+					// console.log("3 TO 5: simulating add of page #" + page);
+					// specifiy col width and wiki_page class
+					pageNode.classList.add('col-md-4', 'wiki_page');
+					// add to correct row
+					document.getElementById("pages3to5").appendChild(pageNode);
+					break;
+				case page=="6" || page=="7" || page=="8":
+					// console.log("6 TO 8: simulating add of page #" + page);
+					// specifiy col width and wiki_page class
+					pageNode.classList.add('col-md-4', 'wiki_page');
+					// add to correct row
+					document.getElementById("pages6to8").appendChild(pageNode);
+					break;
+				case page=="9" || page=="10":
+					// console.log("9 TO 10: simulating add of page #" + page);
+					// specifiy col width and wiki_page class
+					pageNode.classList.add('col-md-6', 'wiki_page');
+					// add to correct row
+					document.getElementById("pages9to10").appendChild(pageNode);
+					break;
 			}
-
-			// When the user clicks anywhere outside of the modal, empty the form, close the modal
-			window.onclick = function(event) 
-			{
-					if (event.target == modal) 
-					{
-							document.getElementById("search_term").value = "";
-							modal.style.display = "none";
-					}
-			}
-				})
-				.catch ( error => alert(error) );
-	}	
-}
+		}
+	});
+}	
 
 function getSearchResults(search_term)
 {
@@ -103,35 +93,3 @@ function getSearchResults(search_term)
 	
 	return response;
 }
-
-// function displayResultsModal(resultsJSON){
-    // // Get the results modal
-    // var modal = document.getElementById("resultsModal");
-
-		// // create the results text block
-		// let results_string = "";
-		// if (resultsJSON.numResults == 0) { results_string = "There are no results."}
-		// else { results_string = JSON.stringify(resultsJSON);}
-		// modal.textContent = results_string;
-		
-    // // Show the modal
-		// modal.style.display = "block";
-
-		// // Get the <span> element that closes the modal
-		// var span = document.getElementById("closeResultsModalButton");
-
-		// // When the user clicks on <span> (x), empty the form inputs, then close the modal
-		// span.onclick = function() 
-		// {
-				// modal.style.display = "none";
-		// }
-
-		// // When the user clicks anywhere outside of the modal, empty the form, close the modal
-		// window.onclick = function(event) 
-		// {
-				// if (event.target == modal) 
-				// {
-						// modal.style.display = "none";
-				// }
-		// }
-// }

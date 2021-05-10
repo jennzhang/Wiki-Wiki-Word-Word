@@ -47,6 +47,7 @@ function bindSearchForm()
 				
 					// create linked page title
 					let pageTitle = document.createElement('a');
+					pageTitle.setAttribute('target', '_blank');
 					let title = document.createTextNode(resultsJSON.pages[page].title);
 					pageTitle.append(title);
 					pageTitle.href = resultsJSON.pages[page].url;
@@ -105,34 +106,3 @@ function getSearchResults(search_term)
 	return response;
 }
 
-// function displayResultsModal(resultsJSON){
-    // // Get the results modal
-    // var modal = document.getElementById("resultsModal");
-
-		// // create the results text block
-		// let results_string = "";
-		// if (resultsJSON.numResults == 0) { results_string = "There are no results."}
-		// else { results_string = JSON.stringify(resultsJSON);}
-		// modal.textContent = results_string;
-		
-    // // Show the modal
-		// modal.style.display = "block";
-
-		// // Get the <span> element that closes the modal
-		// var span = document.getElementById("closeResultsModalButton");
-
-		// // When the user clicks on <span> (x), empty the form inputs, then close the modal
-		// span.onclick = function() 
-		// {
-				// modal.style.display = "none";
-		// }
-
-		// // When the user clicks anywhere outside of the modal, empty the form, close the modal
-		// window.onclick = function(event) 
-		// {
-				// if (event.target == modal) 
-				// {
-						// modal.style.display = "none";
-				// }
-		// }
-// }
