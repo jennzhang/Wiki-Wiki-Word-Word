@@ -8,17 +8,19 @@ const scraper = require('./scraper.js');
 const cors = require('cors');	// Cross-Origin resource handler
 const express = require('express');
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 
 // set up app
-const port = process.argv[2];
+const https_port = process.argv[2];
+const http_port = process.argv[3];
 const rootDir = '/';
 const options = {
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem')
 };
 var app = express();
-app.set('port', process.argv[2]);	// use with the forever process
+//app.set('port', process.argv[2]);	// use with the forever process
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -60,8 +62,17 @@ app.use( (err, req, res, next) =>
 	return res.send('500');
 });
 
+// https server
 https.createServer(options, app)
-.listen(port, () => 
+.listen(https_port, () => 
 {
-	console.log( `Express started on http://${process.env.HOSTNAME}:${app.get('port')}; press Ctrl-C to terminate.` );
+	console.log( `Express started on https://${process.env.HOSTNAME}:${https_port}; press Ctrl-C to terminate.` );
+});
+
+
+// http server
+http.createServer(app)
+.listen(http_port, () =>
+{
+	console.log( `Express started on http://${process.env.HOSTNAME}:${http_port}; press Ctrl-C to terminate.` );
 });
