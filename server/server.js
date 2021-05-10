@@ -5,15 +5,23 @@
 // consumes teammates' microservices (see below for details) and serves distilled  content
 
 const scraper = require('./scraper.js');
+const cors = require('cors');	// Cross-Origin resource handler
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 
 // set up app
 const port = process.argv[2];
 const rootDir = '/';
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
 var app = express();
 app.set('port', process.argv[2]);	// use with the forever process
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 // add module for TFA microservices functions
 // add module for Image_Cropper microservice functions
 
@@ -22,15 +30,16 @@ app.use(express.urlencoded({ extended: false }));
 
 
 // routes
+
+// Wikipedia search api endpoint
 app.get( '/api', (req, res, next) => 
 {
-	
 	const searchTerm = req.query.search_term;
 	
 	if (searchTerm) 
 	{		
 		scraper.getWikiSearchResults(searchTerm)
-		.then( response => {console.log(response); res.send(response);} )
+		.then( response => {res.send(response);} )
 		.catch(next);	// errors | rejected promises move to 500 error handling
 	} else {
 		res.status(400).json({error: "Incorrect server call. Check your spelling and try again."});	//send a 409 status and with the error message
@@ -51,7 +60,8 @@ app.use( (err, req, res, next) =>
 	return res.send('500');
 });
 
-app.listen(app.get('port'), () => 
+https.createServer(options, app)
+.listen(port, () => 
 {
 	console.log( `Express started on http://${process.env.HOSTNAME}:${app.get('port')}; press Ctrl-C to terminate.` );
 });
