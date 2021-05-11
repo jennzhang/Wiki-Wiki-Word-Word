@@ -18,8 +18,6 @@ function bindSearchForm()
     // join() citation: https://www.w3schools.com/jsref/jsref_join.asp
     search_term = search_term.split(" ").join("%20");
 		
-		
-		let container = document.getElementById("results_JSON");
 		getSearchResults(search_term).then( resultsJSON => 
 		{
 			// Get the results modal
