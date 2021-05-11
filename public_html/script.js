@@ -151,7 +151,7 @@ function bindRelatedPages()
 
 function getSearchResults(search_term)
 {
-	let url = "https://flip2.engr.oregonstate.edu:7764/api/?search_term=";
+	let url = "http://flip2.engr.oregonstate.edu:7765/api/?search_term=";
 	url =  url + search_term;
 
 	// use fetch to send the request and get the results (Wikipedia pages)
