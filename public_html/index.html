@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <title>Wiki Wiki Word Word</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+  <!-- Custom styles for the header and footer -->
+  <link href="components/header_footer/sticky-footer-navbar.css" rel="stylesheet">
+  
+  <!-- Main styles -->
+  <link href="styles/style.css" rel="stylesheet">
+
+</head>
+<body class="d-flex flex-column h-100">
+
+	<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom" id="header"></header>
+
+	<!-- Begin page content -->
+	<main class="flex-shrink-0" id="main">
+	</main>
+
+	<footer class="footer mt-auto py-3 bg-light" id="footer"></footer>
+
+
+	<!-- add scripts at the end of the body: -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+	<script>
+	<!--citation for header and footer common file jquery scripts:https://stackoverflow.com/questions/2075337/uncaught-referenceerror-is-not-defined -->
+	$(function(){
+		$("#header").load("components/header_footer/header.html");
+		$("#footer").load("components/header_footer/footer.html");
+		$("#main").load("home.html");
+	});
+	</script>
+	<script src="/~zhangjen/script.js"></script>
+  
+</body>
+</html>

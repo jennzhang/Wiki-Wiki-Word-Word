@@ -1,0 +1,99 @@
+.bd-placeholder-img {
+	font-size: 1.125rem;
+	text-anchor: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+  }
+  
+  @media (min-width: 768px) {
+		.bd-placeholder-img-lg {
+			font-size: 3.5rem;
+		}
+  }
+  
+	.main {
+		float:left;
+	}
+	
+  .img_div {
+	  padding-top: 20px;
+	  padding-bottom: 20px;
+  }
+  
+  /* code styling */
+  code { 
+		background-color: #eee;
+		color: #1E90FF;
+  }
+  
+  pre {
+		background-color: #eee;
+		border: 1px solid #999;
+		padding: 20px;
+		/* citation for below: https://css-tricks.com/snippets/css/make-pre-text-wrap/ */
+		overflow-x: auto;
+		white-space: pre-wrap;
+  }
+	
+  /* tables styling */
+  table {
+		border-collapse: collapse;
+		width: 100%;
+  }
+
+  td, th {
+		border: 1px solid #ddd;
+		padding: 8px;
+  }
+
+  tr:nth-child(odd){
+		background-color: #F8F8FF;
+  }
+
+  th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #F0F8FF;
+    color: #778899;
+  }
+	
+	/* Modal css citation: https://www.w3schools.com/howto/howto_css_modals.asp */
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #F0F8FF;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

@@ -12,6 +12,8 @@ Wiki Wiki Word Word is a web app that has two components:
 		- About and Contact pages with further information
 	2. An API interface (here, integrated with the WWWW server).
 
+Copy the files in /server to your server location.
+Copy the files in /public_html to your website hosting location.
 
 Note: For use of the server code, a new key and certificate need to be created in the same folder as the server file. For Linux shells, enter the below commands:
 	openssl genrsa -out key.pem
