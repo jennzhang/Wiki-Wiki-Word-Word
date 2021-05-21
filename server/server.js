@@ -4,18 +4,22 @@
 // serves page content as needed
 // consumes teammates' microservices (see below for details) and serves distilled  content
 
-const scraper = require('./scraper.js');
+const scraper = require('./scraper.js');		// WWWW Wikipedia Search scraper microservice
+const termLink = require('./tfa_impl.js');		// TFA microservice implementation
+const termBuilder = require('./term_builder.js'); 	// helper module to build the term of the day object
+const cropper = require('./image_cropper_impl.js');	// Image Cropper microservice implementation
 const cors = require('cors');	// Cross-Origin resource handler
 const express = require('express');
 const https = require('https');
 const http = require('http');
-const fs = require('fs');
+const fs = require('fs');		// for writing to local files
 
 // set up app
 const https_port = process.argv[2];
 const http_port = process.argv[3];
 const rootDir = '/';
-const options = {
+const options = 	// for use with https calls
+{
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem')
 };
@@ -24,14 +28,11 @@ var app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-// add module for TFA microservices functions
-// add module for Image_Cropper microservice functions
 
-// functions
-// split into module?
+// middleware for serving static files
+app.use(express.static('public'));
 
-
-// routes
+// routes ============================================
 
 // Wikipedia search api endpoint
 app.get( '/api', (req, res, next) => 
@@ -43,11 +44,53 @@ app.get( '/api', (req, res, next) =>
 		scraper.getWikiSearchResults(searchTerm)
 		.then( response => {res.send(response);} )
 		.catch(next);	// errors | rejected promises move to 500 error handling
-	} else {
+	}
+	else 
+	{
 		res.status(400).json({error: "Incorrect server call. Check your spelling and try again."});	//send a 409 status and with the error message
 		return res.end();
 	}
 });
+
+// Integration with teammate's Today's Featured Article
+// API: get the url from the microservice and send back
+// JSON with info needed for the term of the day
+app.get( '/term_of_the_day', (req, res, next) => 
+{
+	termLink.getUrl()
+	.then(url => 
+	{
+		termBuilder.getTerm(url)
+			.then( term => res.send(term) )
+			.catch(error => console.log(error));
+	})
+	.catch(error => console.log(error));
+});
+
+// Integration with teammate's Image Cropper API
+// get cropped image for the term of the day 
+app.get( '/cropped_image', (req, res, next) => 
+{
+	const url = req.query.url;
+	
+	if (url)
+	{
+		cropper.getCroppedImage(url, () => 
+		{
+			res.send( 
+			{
+				image_url: "http://flip2.engr.oregonstate.edu:9295/images/cropped_image.jpg"
+			})
+		});
+	} 
+	else 
+	{
+		res.status(400).json({error: "Incorrect server call. Check your spelling and try again."});	//send a 400 status and with the error message
+		return res.end();
+	}
+});
+
+// middleware for error handling
 
 app.use( (req,res) => 
 {

@@ -1,5 +1,6 @@
 // CS361_Spring2021_400 - Jennifer Zhang
 // Wikipedia scraper module - get wiki links and blurbs related to a search term
+
 const fetch = require('node-fetch'); // fetch() is browser implemented, so using a third party library for its use with nodeJS
 
 module.exports.getWikiSearchResults = getWikiSearchResults;
@@ -47,7 +48,7 @@ function getWikiSearchResults(searchTerm)
 
 	// note: using the fetch as recommended by the Wikipedia API instead of an XMLHttpRequest object for brevity. MDN citation, if needed: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 	let wikipediaResponse = fetch(wikiAPISearchUrl)
-		.then( wikiResponse => {return wikiResponse.json();})
+		.then( wikiResponse => wikiResponse.json())
 		.then( wikiResponseJSON => {
 			
 			let response = {};
