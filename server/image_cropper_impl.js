@@ -6,7 +6,7 @@
 
 const request = require('request');
 const fs = require('fs');		// for saving the file to a local folder
-const croppedImagePath = "./public/images/cropped_image.png";
+const croppedImagePath = "./public/images/cropped_image.jpg";
 
 module.exports.getCroppedImage = getCroppedImage;
 
