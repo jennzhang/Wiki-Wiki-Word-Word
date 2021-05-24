@@ -6,7 +6,7 @@
 
 const request = require('request');
 const fs = require('fs');		// for saving the file to a local folder
-const croppedImagePath = "./public/images/cropped_image.png";
+const croppedImagePath = "./public/images/cropped_image.jpg";
 
 module.exports.getCroppedImage = getCroppedImage;
 
@@ -15,24 +15,16 @@ module.exports.getCroppedImage = getCroppedImage;
 
 // getCroppedImage():
 // takes in a url for an image and a callback function 
-// and returns a cropped image that is cropped:
-//    10 pixels from the top
-//    10 pixels from the left
-//    100 pixels wide from the cropped upper left corner
-//		100 pixels wide from the cropped upper left corner
-function getCroppedImage(originalImageUrl, callback)
+// and returns a cropped image that is cropped to the
+// dimensions specified by the arguments
+function getCroppedImage(imageObj, callback)
 {
 	// base url
 	let imageCropperUrl = "https://img-service-api.herokuapp.com/transform/crop";
 
-	var params = 
-	{
-		url: originalImageUrl,
-		left: "05",
-		top: "05",
-		width: "50",
-		height: "50"
-	};
+	// set the url, left, top, width, height params
+	// from the imageObj attributes of the same name
+	var params = imageObj;
 
 	// create api call
 	imageCropperUrl = imageCropperUrl + "?";

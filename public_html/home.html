@@ -1,33 +1,31 @@
+<!-- caveats printed to page -->
+<p> * Note: to view the contents of Wiki Wiki Word Word and to use the Wikipedia Search endpoint, please make sure that you are on the OSU network. Also, for correct page loading, make sure you are visiting the site over http, not https!
+</p>
+
+<!-- top intro row -->	 
 <div class="container-fluid">
-    
-	<!-- top two-column row -->
-  <div class="row">	
-	<!-- left column -->
-	<div class="col-sm-6" id="first-column">
-	  <section class="py-5 text-left container">
-	    <br>
-  	  <h2 class="fw-medium">Term of the Day: </h2>
-		  <div id="term">
-				<br>
-		  </div>
-	  </section>
-	</div> <!-- /left column -->
-	
-	<!--- right column -->
-    <div class="col-sm-6 text-left" id="second-column">
-      <section class="py-5 text-left container">
-				<br>
-  	    <h2 class="fw-medium">Related Wikipedia Pages: </h2>
-				<br>
-				<div class="container" id="pages1to3"></div>
-			</section>
-   	</div> <!--- /right column -->
-  </div> <!-- /top two-column row -->
+	<div class="row">
+		<section class="py-5 text-center container">
+		<div class="jumbotron" style="position: relative">
+			<img class="img-responsive" id="term_image" style="
+				opacity: .3; 
+				position:absolute; 
+				left:0; 
+				width: 100%; 
+				overflow: auto
+			">
+			<h1 class="display-10">Term of the Day: </h1>
+			<h1 class="display-4" id="term_heading"></h1>
+			<div id="term"><br></div>
+			<hr class="my-4">
+		</div>
 </div>
 
 <!-- bottom rows -->
 <div class="container-fluid">
+	<h2 class="fw-medium">Related Wikipedia Pages: </h2>
 	<!-- rows of page columns -->
+	<div class="row" id="pages1to3"></div>
 	<div class="row" id="pages4to6"></div>
 	<div class="row" id="pages7to8"></div>
 	<div class="row" id="pages9to10"></div>

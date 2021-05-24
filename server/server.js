@@ -71,15 +71,28 @@ app.get( '/term_of_the_day', (req, res, next) =>
 // get cropped image for the term of the day 
 app.get( '/cropped_image', (req, res, next) => 
 {
-	const url = req.query.url;
-	
-	if (url)
+	// params to send to the image cropper microservice
+	const imageObj = 
 	{
-		cropper.getCroppedImage(url, () => 
+		url: req.query.url,
+		top: req.query.top,
+		left: req.query.left,
+		width: req.query.width,
+		height: req.query.height
+	}
+	
+	if ( imageObj.url 
+		&& imageObj.top 
+		&& imageObj.left 
+		&& imageObj.width 
+		&& imageObj.height )
+	{
+		cropper.getCroppedImage(imageObj, () => 
 		{
 			res.send( 
 			{
-				image_url: "http://flip2.engr.oregonstate.edu:9295/images/cropped_image.jpg"
+				updateUnixTimestamp: Date.now(),	// send unix update timestamp: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+				cropped_image_url: "http://flip2.engr.oregonstate.edu:7765/images/cropped_image.jpg"	// send cropped image file location (note: file gets overwritten each successful call to this endpoint)
 			})
 		});
 	} 

@@ -130,16 +130,18 @@ function getSearchResults(search_term)
 // term object info
 function buildTerm(termObj)
 {
-	// CREATE HTML FOR THE TERM OF THE DAY
-	// create div to house the term of the day content
-	let termNode = document.createElement('div');
+	// get div for the term of the day content
+	let termNode = document.getElementById('term');
 					
 	// create linked page title
-	let termHeader = document.createElement('h2');
-	termHeader.classList.add('fw-light');
+	let termHeading = document.getElementById('term_heading');
+	
+	// termHeading.classList.add('fw-light');
 	let termTitleLink = document.createElement('a');
 	termTitleLink.setAttribute('target', '_blank');	// set text in switch statement below
-
+	termTitleLink.href = termObj.href;
+	termTitleLink.appendChild(document.createTextNode(termObj.title));
+	
 	// create page image
 	// update code with image cropper microservice implementation
 	let termImage = document.createElement('img');	// set src and alt in switch statement below
@@ -147,10 +149,7 @@ function buildTerm(termObj)
 	// create page summary
 	let termSummary = document.createElement('p');
 	termSummary.classList.add('lead', 'text-muted');
-		
-	termTitleLink.href = termObj.href;
-	termTitleLink.appendChild(document.createTextNode(termObj.title));
-	
+
 	// if the term of the day doesn't have an image, 
 	// use the Wikipedia logo: https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/263px-Wikipedia-logo-v2.svg.png
 	if (termObj.image.src == "")
@@ -166,12 +165,9 @@ function buildTerm(termObj)
 	termSummary.textContent = termObj.extract;
 	
 	// appends 
-	termHeader.append(termTitleLink);
-	termNode.appendChild(termHeader);
+	termHeading.append(termTitleLink);
 	termNode.appendChild(termImage);
 	termNode.appendChild(termSummary);
-	// call after getSearchResults returns: document.getElementById("term").appendChild(termNode);
-	
 	
 	// format the search term. change any spaces to "%20"
 	// split() citation: https://www.w3schools.com/jsref/jsref_split.asp
@@ -186,66 +182,62 @@ function buildTerm(termObj)
 		// linking to the Wikipedia page, then print the extract
 		for ( const page in resultsJSON.pages )
 		{
-				document.getElementById("term").appendChild(termNode);
-				// if the page is the same as the term of 
-				// the day's page, skip it
-				let search_term_spaces = search_term.split("%20").join(" ");
+			// if the page is the same as the term of 
+			// the day's page, skip it
+			let search_term_spaces = search_term.split("_").join(" ");
 			
-				if (!( search_term_spaces.toLowerCase() == resultsJSON.pages[page].title.toLowerCase() ))
-				{
-					let pageNode = document.createElement('div');
-					
-					// create linked page title
-					let pageHeader = document.createElement('h2');
-					pageHeader.classList.add('fw-light');
-					let pageTitle = document.createElement('a');
-					pageTitle.setAttribute('target', '_blank');
-					let title = document.createTextNode(resultsJSON.pages[page].title);
-					pageTitle.append(title);
-					pageTitle.href = resultsJSON.pages[page].url;
-					pageHeader.append(pageTitle);
-					
+			if (!( search_term_spaces.toLowerCase() == resultsJSON.pages[page].title.toLowerCase() ))
+			{
+				let pageNode = document.createElement('div');
 				
-					// create page summary
-					let pageSummary = document.createElement('p');
-					pageSummary.classList.add('lead', 'text-muted');
-					let summary = document.createTextNode(resultsJSON.pages[page].extract);
-					pageSummary.append(summary);
+				// create linked page title
+				let pageHeader = document.createElement('h2');
+				pageHeader.classList.add('fw-light');
+				let pageTitle = document.createElement('a');
+				pageTitle.setAttribute('target', '_blank');
+				let title = document.createTextNode(resultsJSON.pages[page].title);
+				pageTitle.append(title);
+				pageTitle.href = resultsJSON.pages[page].url;
+				pageHeader.append(pageTitle);
 				
-					// add to the new pageNode
-					pageNode.appendChild(pageHeader);
-					pageNode.appendChild(pageSummary);
-				
+			
+				// create page summary
+				let pageSummary = document.createElement('p');
+				pageSummary.classList.add('lead', 'text-muted');
+				let summary = document.createTextNode(resultsJSON.pages[page].extract);
+				pageSummary.append(summary);
+			
+				// add to the new pageNode
+				pageNode.appendChild(pageHeader);
+				pageNode.appendChild(pageSummary);
+			
 				//add to the home page, based on index
 				// condition for below switch logic: https://stackoverflow.com/questions/5464362/javascript-using-a-condition-in-switch-case
-				switch ( true )	// resolves against booleans in case conditions
+				let numPagesAdded = 0;
+				
+				if ( numPagesAdded < 4 ) 
 				{
-					case page == "1" || page == "2"|| page == "3":
-						pageNode.classList.add('wiki_page');
-						// add to correct row
-						document.getElementById("pages1to3").appendChild(pageNode);
-						break;
-					
-					case page=="4" || page=="5" || page=="6":
-						// specifiy col width and wiki_page class
-						pageNode.classList.add('col-md-4', 'wiki_page');
-						// add to correct row
-						document.getElementById("pages4to6").appendChild(pageNode);
-						break;
-						
-					case page == "7" || page == "8":
-						// specifiy col width and wiki_page class
-						pageNode.classList.add('col-md-6', 'wiki_page');
-						// add to correct row
-						document.getElementById("pages7to8").appendChild(pageNode);
-						break;
-						
-					case page == "9" || page == "10":
-						// specifiy col width and wiki_page class
-						pageNode.classList.add('col-md-6', 'wiki_page');
-						// add to correct row
-						document.getElementById("pages9to10").appendChild(pageNode);
-						break;
+					pageNode.classList.add('col-md-4','wiki_page');
+					// add to correct row
+					document.getElementById("pages1to3").appendChild(pageNode);
+				}
+				else if ( numPagesAdded < 7 )
+				{
+					pageNode.classList.add('col-md-4','wiki_page');
+					// add to correct row
+					document.getElementById("pages4to6").appendChild(pageNode);
+				}
+				else if ( numPagesAdded < 9 )
+				{
+					pageNode.classList.add('col-md-6','wiki_page');
+					// add to correct row
+					document.getElementById("pages7to8").appendChild(pageNode);
+				}
+				else
+				{
+					pageNode.classList.add('col-md-6','wiki_page');
+					// add to correct row
+					document.getElementById("pages9to10").appendChild(pageNode);
 				}
 			}
 		}
