@@ -92,7 +92,7 @@ app.get( '/cropped_image', (req, res, next) =>
 			res.send( 
 			{
 				updateUnixTimestamp: Date.now(),	// send unix update timestamp: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
-				cropped_image_url: "http://flip2.engr.oregonstate.edu:9295/images/cropped_image.jpg"	// send cropped image file location (note: file gets overwritten each successful call to this endpoint)
+				cropped_image_url: "http://flip2.engr.oregonstate.edu:7765/images/cropped_image.jpg"	// send cropped image file location (note: file gets overwritten each successful call to this endpoint)
 			})
 		});
 	} 
