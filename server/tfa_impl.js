@@ -106,8 +106,10 @@ function getTermLink(url)
 			for ( p in paragraphsArray )
 			{ 
 				let anchorNodes = paragraphsArray[p].getElementsByTagName('a');
-				if ( anchorNodes.length > 0 ) 
+				if ( anchorNodes.length > 5 ) 
+				{ 
 					return "https://en.wikipedia.org" + anchorNodes[anchorNodes.length - 4].getAttribute('href');
+				}
 			}
 		})
 		.catch(error => console.log(error));
@@ -155,10 +157,11 @@ function getWikiFAUrl()
 	let day = today.getDate();
 	let year = today.getFullYear();
 
-	// build url
-	// let url = "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/";
-	// url = url + month + "_" + day + ",_" + year;
-	let url = "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/June_16,_2021";
+	//build url
+	let url = "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/";
+	url = url + month + "_" + day + ",_" + year;
+	// test:
+	// let url = "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/June_17,_2021";
 	
 	return url;
 }
