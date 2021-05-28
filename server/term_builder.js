@@ -173,6 +173,31 @@ function getExtract(url)
 		.catch( error => {console.log(error);});
 }
 
+// isUsableImage(image):
+// helper function that takes an image
+// and returns true if it doesn't fall
+// into two edge case categories: too
+// small or a specific question-mark 
+// book icon. Future: add more cases
+function isUsableImage(image)
+{
+	// edge cases: skip images that are not related to the page content
+	return !( image.getAttribute("width") < 50 
+					|| (image.getAttribute("src").includes("Question_book-new.svg")))
+}
+
+// setImage(image):
+// helper function that takes an html image element
+// and returns an object with that image's src and 
+// alt attributes
+function setImage(image)
+{
+	return {
+						src: image.getAttribute('src'),
+						alt: image.getAttribute('alt')
+					};
+}
+
 // getImageInfo():
 // for the term of the day: get the image
 // link and alt text from Wikipedia
@@ -181,46 +206,23 @@ function getImageInfo(html)
 	// get a DOM parser
 	const parser = new DOMParser();
 
-	// get the first image tag in the body content div
+	// get the collection of image tags in the body content
 	const images = parser
 											.parseFromString(html, "text/html")
 											.getElementById("bodyContent")
 											.getElementsByTagName('img');
 	
-	// if exists, get the image that is most likely the best one: 										
-	if ( images.length > 0)
+	// find a usable image
+	let img = {src: "", alt: ""};
+
+	// check if there are images
+	if (images.length > 0)
 	{
-		let img = images[0];
-		
-		// sometimes the image is for a special note for the page 
-		// skip this small image and check for another
-		// edge case: question mark book (out of scope: how to 
-		// best deal with edge cases, systematically)
-		if ( img.getAttribute("width") < 50 
-				|| (img.getAttribute("src").includes("Question_book-new.svg")))
-		{
-			if ( images.length > 1 )
-			{
-				img = images[1];
-				// return the image info: image link and image alt text
-				return image = 
-					{
-						src: img.getAttribute('src'),
-						alt: img.getAttribute('alt')
-					};
-			}
-			else return image = { src: "", 
-														alt: "" 
-													};
-		}
-		// future scope: redo all these returns
-		return image = 
-					{
-						src: img.getAttribute('src'),
-						alt: img.getAttribute('alt')
-					};
+		// is the first one usable?
+		if (isUsableImage(images[0])) {img = setImage(images[0])}
+		// then use the second image, if exists
+		else if (images.length > 1) {img = setImage(images[1])}
 	}
-	else return image = { src: "", 
-												alt: "" 
-											};
+
+	return img;
 }
