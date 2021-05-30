@@ -13,6 +13,9 @@ const express = require('express');
 const https = require('https');
 const http = require('http');
 const fs = require('fs');		// for writing to local files
+const nodemailer = require('nodemailer'); 	// for sending contact us emails
+const bodyParser = require('body-parser');	// parsing form data
+require('dotenv').config();	// use env variables for smtp auth
 
 // set up app
 const https_port = process.argv[2];
@@ -23,7 +26,7 @@ const options = 	// for use with https calls
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem')
 };
-var app = express();
+const app = express();
 //app.set('port', process.argv[2]);	// use with the forever process
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -31,6 +34,22 @@ app.use(cors());
 
 // middleware for serving static files
 app.use(express.static('public'));
+
+// body-parser middleware setup
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// nodemailer middleware setup
+const transporter = nodemailer.createTransport(
+{
+	port: 465,
+	host: "smtp.gmail.com",
+	auth: 
+	{
+	  user: process.env.MAIL_USERNAME,	// use of env var for sensitive info citation: https://lo-victoria.com/how-to-build-a-contact-form-with-javascript-and-nodemailer
+		pass: process.env.MAIL_PASSWORD
+	}	
+});	// see: https://nodemailer.com/usage/
 
 // routes ============================================
 
@@ -103,8 +122,34 @@ app.get( '/cropped_image', (req, res, next) =>
 	}
 });
 
-// middleware for error handling
+// Send email with the contact form data
+app.post("/contact", (req, res) => 
+{
+	const {name, senderEmail, subject, message} = req.body;	// newly learned unpack shortcut!: https://medium.com/coox-tech/send-mail-using-node-js-express-js-with-nodemailer-93f4d62c83ee
+	
+	const mailData = 
+	{
+		from: senderEmail,
+		to: process.env.MAIL_USERNAME,
+		subject: subject,
+		text: `${name} <${senderEmail}> \n\n${message}`	// template literal use idea: https://lo-victoria.com/how-to-build-a-contact-form-with-javascript-and-nodemailer
+	}
+	
+	transporter.sendMail(mailData, (error, data) =>
+	{
+		if (error) 
+		{
+			 console.log(error);
+       res.status(500).send("Could not send the contact email.");
+		}
+		else
+		{
+			res.status(200).send("Successfully sent the Wiki Wiki Word Word contact email");
+		}
+	});
+});
 
+// middleware for error handling
 app.use( (req,res) => 
 {
 	res.status(404);
