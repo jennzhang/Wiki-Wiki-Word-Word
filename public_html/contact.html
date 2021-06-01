@@ -14,7 +14,7 @@
   <link href="components/header_footer/sticky-footer-navbar.css" rel="stylesheet">
   
   <!-- Main styles -->
-  <link href="styles/style.css" rel="stylesheet">
+  <link href="./styles/style.css" rel="stylesheet">
 
 </head>
 <body class="d-flex flex-column h-100">
@@ -24,15 +24,30 @@
 	<!-- Begin page content -->
 	<main class="flex-shrink-0" id="main">
 	  <div class="column">
-		<section class="py-5 text-left container">
-		  <div class="row py-lg-5">
-			<div class="col-lg-6 col-md-8 mx-auto">
-			  <h1 class="fw-light">Get In Touch</h1>
-			  <br>
-		      <p class="lead text-muted">Thanks for stopping by. I hope you are enjoying Wiki Wiki Word Word! Got questions? Want to give feedback? Contact Wiki Wiki Word Word's author, Jennifer Zhang, at <a href="mailto:zhangjen@oregonstate.edu">zhangjen@oregonstate.edu</a>.</p>
-			</div>
-		  </div>
-		</section>
+			<section class="py-5 text-left container">
+				<div class="row py-lg-5">
+					<div class="col-lg-6 col-md-8 mx-auto">
+						<h1 class="fw-light">Get In Touch</h1>
+						<br>
+						<p class="lead text-muted">Thanks for stopping by. I hope you are enjoying Wiki Wiki Word Word! Got questions? Want to give feedback? Contact Wiki Wiki Word Word's author, Jennifer Zhang, using the form below:
+						<br>
+						</p>
+						<div id="contact_form_div" class="fw-light">
+							<form action="http://flip2.engr.oregonstate.edu:7765/contact" method="post" id="contact_form">
+								<label for="name">Name: </label>
+								<input type="text" id="name" name="name" required><br><br>
+								<label for="senderEmail">Email: </label>
+								<input type="email" id="senderEmail" name="senderEmail" required><br><br>
+								<label for="subject">Subject: </label>
+								<input type="text" id="subject" name="subject" required><br><br>
+								<label for="message">Message: </label>
+								<textarea rows="4" cols="75" id="message" name="message" required></textarea><br><br>
+								<input type="submit" value="Send">
+							</form>
+						</div>
+					</div>
+				</div>
+			</section>
 	  </div>
 	</main>
 
@@ -49,5 +64,6 @@
 		$("#footer").load("components/header_footer/footer.html");
 	});
 	</script>
+	<script src="./contact.js"></script>
 </body>
 </html>
