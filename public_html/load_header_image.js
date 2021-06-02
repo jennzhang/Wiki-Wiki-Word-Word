@@ -1,25 +1,18 @@
 // CS361_Spring2021_400 - Jennifer Zhang
 // Index page script to load the background 
-// image for the term of the day heading
-// Part of the implementation for the image
-// cropper/transformer microservice
+// image for the term of the day heading,
+// using the the image cropper/transformer 
+// microservice
 
 //add form handler
 document.addEventListener('DOMContentLoaded', bindGetHeader);
 
-// header image backup url
 const backupHeaderImage = "./components/header_footer/backup_header_image.jpg";
 
 // bindGetHeader():
-// Handler for updating the header image
-// Called only when visiting the home page
-// Visually, nothing looks different, but
-// the header is being updated nonetheless
-// as evidenced by the console log after
-// the function call
+// handler for updating the header image
 function bindGetHeader() 
 {
-	// get updated header
 	getHeaderImage()
 	.then(results => 
 	{
@@ -29,24 +22,16 @@ function bindGetHeader()
 	.catch(error => 
 	{
 		console.log(error);
-		// update with backup
 		updateHeaderImage(backupHeaderImage);
 	});
 }	
 
 // getHeaderImage():
-// Hits the WWWW server endpoint /cropped_image
-// which calls the image cropper microservice, 
-// sending in the url of the original image, the
-// dimensions to which to crop the image, and the
-// callback function to run after cropping the 
-// image. The WWWW /cropped_image endpoint sends
-// back the url/location of the modified image, as 
-// well as the unix timestamp of when the modified
-// image was created
+// Hits the WWWW endpoint "/cropped_image"
+// which calls the image cropper microservice
+// with an image url, returns a cropped image
 function getHeaderImage()
 {
-	//build the endpoint call
 	let endpoint = "http://flip2.engr.oregonstate.edu:7765/cropped_image";
 
 	const params =
@@ -62,25 +47,18 @@ function getHeaderImage()
 	endpoint = endpoint + "?";
 	Object.keys(params).forEach( key => {endpoint += "&" + key + "=" + params[key];});
 
-	// use fetch to send the request and get the results (Wikipedia pages)
 	return fetch(endpoint)
 		.then(response => response.json())
 		.catch(error => console.log(error.message));
 }
 
 // updateHeaderImage():
-// places the img src for the term of the 
-// day, as specified by the imageUrl arg.
-// the backup image is black and white and 
-// the sepia toned image is the result of 
-// the call to the image cropper/transformer
-// microservice
+// updates the header image with the 
+// cropped image version of imageUrl
 function updateHeaderImage(imageUrl)
 {
-	// create image node
 	const term_image = document.getElementById('term_image');	
 
-	// set attributes
 	term_image.src = imageUrl;
 	term_image.height = 112;
 	term_image.width = 1024;

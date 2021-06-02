@@ -1,5 +1,9 @@
+// CS361_Spring2021_400 - Jennifer Zhang
+// Microservice page script to for the  
+// GUI version of the Wikipedia Pages 
+// search microservice
 
-//add form handler
+// add form handler
 document.addEventListener('DOMContentLoaded', bindSearchForm);
 
 // bindSearchForm()
@@ -13,17 +17,16 @@ function bindSearchForm()
 		
 		// build api call
 		let search_term = document.getElementById("search_term").value; 
-		// format the search term. change any spaces to "%20"
+
     // split() citation: https://www.w3schools.com/jsref/jsref_split.asp
     // join() citation: https://www.w3schools.com/jsref/jsref_join.asp
     search_term = search_term.split(" ").join("%20");
 		
 		getSearchResults(search_term).then( resultsJSON => 
 		{
-			// Get the results modal
 			var modal = document.getElementById("resultsModal");
-
 			var resultsList = document.getElementById("resultsList");
+
 			// clear out any old data
 			while ( resultsList.firstChild ) { resultsList.removeChild(resultsList.firstChild) };
 			
@@ -37,47 +40,38 @@ function bindSearchForm()
 			}
 			else
 			{	
-				// for each result, print the title page as a subheading, 
-				// linking to the Wikipedia page, then print the extract
+				// for each result, add a linked title and summary 
 				for ( const page in resultsJSON.pages )
 				{				
-					let pageNode = document.createElement('p');
+					let relatedWikipediaPageDiv = document.createElement('p');
 				
-					// create linked page title
 					let pageTitle = document.createElement('a');
 					pageTitle.setAttribute('target', '_blank');
 					let title = document.createTextNode(resultsJSON.pages[page].title);
 					pageTitle.append(title);
 					pageTitle.href = resultsJSON.pages[page].url;
 				
-					// create page summary
 					let pageSummary = document.createElement('p');
 					let summary = document.createTextNode(resultsJSON.pages[page].extract);
 					pageSummary.append(summary);
 				
-				// add to the new pageNode
-					pageNode.appendChild(pageTitle);
-					pageNode.appendChild(pageSummary);
+					relatedWikipediaPageDiv.appendChild(pageTitle);
+					relatedWikipediaPageDiv.appendChild(pageSummary);
 				
-				//add to the modal
-				document.getElementById("resultsList").appendChild(pageNode);
+					document.getElementById("resultsList").appendChild(relatedWikipediaPageDiv);
 				}
 			}
 		
 			// Show the modal
 			modal.style.display = "block";
-
-			// Get the <span> element that closes the modal
 			var span = document.getElementById("closeResultsModalButton");
-
-			// When the user clicks on <span> (x), empty the form inputs, then close the modal
 			span.onclick = function() 
 			{
 					document.getElementById("search_term").value = "";
 					modal.style.display = "none";
 			}
 
-			// When the user clicks anywhere outside of the modal, empty the form, close the modal
+			// clear and close modal
 			window.onclick = function(event) 
 			{
 					if (event.target == modal) 

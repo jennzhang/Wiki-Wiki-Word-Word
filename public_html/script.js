@@ -1,36 +1,24 @@
 // CS361_Spring2021_400 - Jennifer Zhang
 // main Wiki Wiki Word Word home page script
 // major features: 
-// 1. get term of the day info, which is distilled 
-// from the links in the content from the Today's 
-// Featured Article microservice. There is a fail-
-// safe in place in case the microservice call 
-// fails, then there is custom code in the 
-// 'tfa_impl.js' module to get manually get the TFA 
-// info from Wikipedia. There is also backup code 
-// in this unit in case calls to Wikipedia are not 
-// working. 
+// 1. get term of the day info: distil from
+// the Today's Featured Article microservice 
+// || use the fail-safe if microservice call 
+// fails
 // 2. get the related pages by calling the WWWW 
-// Wikipedia search endpoint and passing the term
-// of the day
-// 3. the home page seeds getting the cropped image
-// for the header. The header image's file is 
-// overwritten with a new cropped image by calling
-// the image cropper microservice and passing in the 
-// original image file. Once the cropped image is 
-// returned, it is saved as the cropped image file, 
-// overwriting the current file
+// Wikipedia pages search endpoint and passing 
+// in the term of the day
+// 3. get the updated term of the day heading 
+// image file from the image cropper microservice
 
-//add form handler
+// form handler
 document.addEventListener('DOMContentLoaded', bindRelatedPages);
 
 
 // bindRelatedPages()
-// handler for populating the Related Wikipedia
-// Pages Section
+// handler for populating the Related Pages
 function bindRelatedPages() 
 {
-	// get Term of the Day's info
 	getTerm()
 	.then(term => 
 	{
@@ -49,40 +37,28 @@ function bindRelatedPages()
 }	
 
 // getTerm():
-// hits the WWWW server endpoint /term_of_the_day
+// hits the WWWW server endpoint /term_of_the_day:
 // which calls the TFA microservice to get 
-// Wikipedia's Today's Featured Article. From the 
-// Featured Article's link, get and parse page html,
-// and use one of the links (fourth from last in the
-// first body paragraph, arbitrarily) as the term of
-// the day. From the term of the day's page, get the
-// term of the day image info, if exists, and call
-// Wikipedia's api to get the short summary (Wikipedia
-// calls it the extract) of the page. The WWWW server
-// endpoint delivers the term of the day info as the 
-// response payload.
+// Wikipedia's Today's Featured Article url, 
+// parses the TFA page html distill the term 
+// of the day info
 function getTerm()
 {
 	let url = "http://flip2.engr.oregonstate.edu:7765/term_of_the_day";
 
-	// use fetch to send the request and get the results (Wikipedia pages)
 	return fetch(url)
 		.then(response => response.json())
 		.catch(error => console.log(error.message));
 }
 
 // getBackup():
-// returns term of the day info as a backup in case
-// getTerm() fails
+// returns backup term of the day info
+// in case getTerm() call fails
 function getBackup()
 {
-	// declare term info object
 	let termObj = {};
 	
-	// alternate term by day of the week
 	let today = new Date();
-	
-	// set term info content and attributes
 	if (today.getDay() == 1)	// Mondays
 	{
 		termObj.title = "Mount Eerie";
@@ -111,42 +87,34 @@ function getBackup()
 }
 
 // getSearchResults():
-// hits the Wiki Wiki Word Word Wikipedia Search API
-// to get the links and extracts to pagest that are
-// related to the term of the day
+// hits the WWWW Search API endpoint to get 
+// related pages info for the term of the day
 function getSearchResults(searchTerm)
 {
 	let url = "http://flip2.engr.oregonstate.edu:7765/api/?search_term=";
 	url =  url + searchTerm;
 
-	// use fetch to send the request and get the results (Wikipedia pages)
 	return fetch(url)
 		.then(response => response.json())
 		.catch(error => console.log(error.message));
 }
 
 // buildRelatedPages():
-// takes in a searchTerm and builds the html
-// containing the results
 function buildRelatedPages(searchTerm)
 {
-	// get the related pages
 	getSearchResults(searchTerm)
 	.then( resultsJSON => 
 	{ 
-		// for each result, print the title page as a subheading, 
-		// linking to the Wikipedia page, then print the extract
+		// for each result, add the linked title and extract 
 		for ( const page in resultsJSON.pages )
 		{
-			// if the page is the same as the term of 
-			// the day's page, skip it
+			// if the page == term of the day's page, skip
 			let searchTerm_spaces = searchTerm.split("_").join(" ");
 			
 			if (!( searchTerm_spaces.toLowerCase() == resultsJSON.pages[page].title.toLowerCase() ))
 			{
 				let relatedWikipediaPageDiv = document.createElement('div');
 				
-				// create linked page title
 				let pageHeader = document.createElement('h2');
 				pageHeader.classList.add('fw-light');
 				let pageTitle = document.createElement('a');
@@ -156,43 +124,44 @@ function buildRelatedPages(searchTerm)
 				pageTitle.href = resultsJSON.pages[page].url;
 				pageHeader.append(pageTitle);
 				
-			
-				// create page summary
 				let pageSummary = document.createElement('p');
 				pageSummary.classList.add('lead', 'text-muted');
 				let summary = document.createTextNode(resultsJSON.pages[page].extract);
 				pageSummary.append(summary);
 			
-				// add to the new relatedWikipediaPageDiv
 				relatedWikipediaPageDiv.appendChild(pageHeader);
 				relatedWikipediaPageDiv.appendChild(pageSummary);
 			
-				//add to the home page, based on index
+				// add pages
 				let numPagesAdded = 0;
 				
 				if (numPagesAdded < 4) 
 				{
-					relatedWikipediaPageDiv.classList.add('col-md-4','wiki_page');
-					// add to correct row
-					document.getElementById("pages1to3").appendChild(relatedWikipediaPageDiv);
+					relatedWikipediaPageDiv
+									.classList.add('col-md-4','wiki_page');
+					document.getElementById("pages1to3")
+									.appendChild(relatedWikipediaPageDiv);
 				}
 				else if (numPagesAdded < 7)
 				{
-					relatedWikipediaPageDiv.classList.add('col-md-4','wiki_page');
-					// add to correct row
-					document.getElementById("pages4to6").appendChild(relatedWikipediaPageDiv);
+					relatedWikipediaPageDiv
+									.classList.add('col-md-4','wiki_page');
+					document.getElementById("pages4to6")
+									.appendChild(relatedWikipediaPageDiv);
 				}
 				else if (numPagesAdded < 9)
 				{
-					relatedWikipediaPageDiv.classList.add('col-md-6','wiki_page');
-					// add to correct row
-					document.getElementById("pages7to8").appendChild(relatedWikipediaPageDiv);
+					relatedWikipediaPageDiv
+									.classList.add('col-md-6','wiki_page');
+					document.getElementById("pages7to8")
+									.appendChild(relatedWikipediaPageDiv);
 				}
 				else
 				{
-					relatedWikipediaPageDiv.classList.add('col-md-6','wiki_page');
-					// add to correct row
-					document.getElementById("pages9to10").appendChild(relatedWikipediaPageDiv);
+					relatedWikipediaPageDiv
+									.classList.add('col-md-6','wiki_page');
+					document.getElementById("pages9to10")
+									.appendChild(relatedWikipediaPageDiv);
 				}
 			}
 		}
@@ -201,30 +170,17 @@ function buildRelatedPages(searchTerm)
 }
 
 // buildTerm():
-// takes the term of the day object
-// and builds the DOM elements/tree to
-// house those objects, then populates
-// those objects' attributes with the 
-// term object info
+// build the term of the day html
 function buildTerm(termObj)
 {
-	// get div for the term of the day content
 	let termNode = document.getElementById('term');
 					
-	// create linked page title
 	let termHeading = document.getElementById('term_heading');
-	
-	// termHeading.classList.add('fw-light');
 	let termTitleLink = document.createElement('a');
-	termTitleLink.setAttribute('target', '_blank');	// set text in switch statement below
+	termTitleLink.setAttribute('target', '_blank');	
 	termTitleLink.href = termObj.url;
 	termTitleLink.appendChild(document.createTextNode(termObj.title));
-	
-	// create page image
-	// update code with image cropper microservice implementation
-	let termImage = document.createElement('img');	// set src and alt in switch statement below
-
-	// create page summary
+	let termImage = document.createElement('img');
 	let termSummary = document.createElement('p');
 	termSummary.classList.add('lead', 'text-muted');
 
@@ -247,8 +203,5 @@ function buildTerm(termObj)
 	termNode.appendChild(termImage);
 	termNode.appendChild(termSummary);
 	
-	// format the search term. change any spaces to "%20"
-	// split() citation: https://www.w3schools.com/jsref/jsref_split.asp
-	// join() citation: https://www.w3schools.com/jsref/jsref_join.asp
 	return termObj.title.split(" ").join("%20");
 }
