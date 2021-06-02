@@ -1,8 +1,5 @@
 // Wiki Wiki Word Word Server 
 // Jennifer Zhang (zhangjen@oregonstate.edu) CS361_Spring2021_400
-// provides an api endpoint 
-// serves page content as needed
-// consumes teammates' microservices (see below for details) and serves distilled  content
 
 const scraper = require('./scraper.js');		// WWWW Wikipedia Search scraper microservice
 const termLink = require('./tfa_impl.js');		// TFA microservice implementation
@@ -12,7 +9,7 @@ const cors = require('cors');	// Cross-Origin resource handler
 const express = require('express');
 const https = require('https');
 const http = require('http');
-const fs = require('fs');		// for writing to local files
+const fs = require('fs');	
 const nodemailer = require('nodemailer'); 	// for sending contact us emails
 const bodyParser = require('body-parser');	// parsing form data
 require('dotenv').config();	// use env variables for smtp auth
@@ -27,19 +24,15 @@ const options = 	// for use with https calls
   cert: fs.readFileSync('cert.pem')
 };
 const app = express();
-//app.set('port', process.argv[2]);	// use with the forever process
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-// middleware for serving static files
+// middlewares setup
 app.use(express.static('public'));
-
-// body-parser middleware setup
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// nodemailer middleware setup
 const transporter = nodemailer.createTransport(
 {
 	port: 465,
@@ -49,10 +42,10 @@ const transporter = nodemailer.createTransport(
 	  user: process.env.MAIL_USERNAME,	// use of env var for sensitive info citation: https://lo-victoria.com/how-to-build-a-contact-form-with-javascript-and-nodemailer
 		pass: process.env.MAIL_PASSWORD
 	}	
-});	// see: https://nodemailer.com/usage/
+});
+
 
 // routes ============================================
-
 // Wikipedia search api endpoint
 app.get( '/api', (req, res, next) => 
 {
@@ -90,7 +83,6 @@ app.get( '/term_of_the_day', (req, res, next) =>
 // get cropped image for the term of the day 
 app.get( '/cropped_image', (req, res, next) => 
 {
-	// params to send to the image cropper microservice
 	const imageObj = 
 	{
 		url: req.query.url,
@@ -110,14 +102,16 @@ app.get( '/cropped_image', (req, res, next) =>
 		{
 			res.send( 
 			{
-				updateUnixTimestamp: Date.now(),	// send unix update timestamp: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
-				cropped_image_url: "http://flip2.engr.oregonstate.edu:7765/images/cropped_image.jpg"	// send cropped image file location (note: file gets overwritten each successful call to this endpoint)
+				updateUnixTimestamp: Date.now(),	// send unix update timestamp
+				// send cropped image file location 
+				// note: file gets continuously overwritten
+				cropped_image_url: "http://flip2.engr.oregonstate.edu:7765/images/cropped_image.jpg"	
 			})
 		});
 	} 
 	else 
 	{
-		res.status(400).json({error: "Incorrect server call. Check your spelling and try again."});	//send a 400 status and with the error message
+		res.status(400).json({error: "Incorrect server call. Check your spelling and try again."});
 		return res.end();
 	}
 });
@@ -125,7 +119,7 @@ app.get( '/cropped_image', (req, res, next) =>
 // Send email with the contact form data
 app.post("/contact", (req, res) => 
 {
-	const {name, senderEmail, subject, message} = req.body;	// newly learned unpack shortcut!: https://medium.com/coox-tech/send-mail-using-node-js-express-js-with-nodemailer-93f4d62c83ee
+	const {name, senderEmail, subject, message} = req.body;	// unpacking shortcut!: https://medium.com/coox-tech/send-mail-using-node-js-express-js-with-nodemailer-93f4d62c83ee
 	
 	const mailData = 
 	{
@@ -145,7 +139,7 @@ app.post("/contact", (req, res) =>
 		else
 		{
 			res.status(200).send("Successfully sent the Wiki Wiki Word Word contact email");
-		}
+	  }
 	});
 });
 
